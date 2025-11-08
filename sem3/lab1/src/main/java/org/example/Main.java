@@ -33,12 +33,8 @@ public class Main {
             }
 
             MovementStrategy strategy = chooseStrategy(choice);
-            if (strategy == null) {
-                System.out.println("Invalid choice! Please enter a number between 0-4!");
-                continue;
-            }
-
             hero.setStrategy(strategy);
+
             Point destination = getRandomPoint();
             hero.move(destination);
         }
@@ -74,9 +70,15 @@ public class Main {
     private static int readInt() {
         while (true) {
             try {
-                return Integer.parseInt(scanner.nextLine());
+                int value = Integer.parseInt(scanner.nextLine());
+                if (value < 0 || value > 4) {
+                    throw new IllegalArgumentException("Number must be between 0-4");
+                }
+                return value;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter an INTEGER");
+                System.err.println("Invalid input. Please enter an INTEGER between 0-4!");
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid choice! Please enter a number between 0-4!");
             }
         }
     }
