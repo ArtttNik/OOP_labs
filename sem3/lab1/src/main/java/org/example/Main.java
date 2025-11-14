@@ -2,8 +2,8 @@ package org.example;
 
 import org.example.hero.Hero;
 import org.example.hero.movement.*;
+import org.example.point.Point;
 
-import java.awt.*;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -15,31 +15,36 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final Random random = new Random();
     private static final Scanner scanner = new Scanner(System.in);
+    private static final Random random = new Random();
 
     public static void main(String[] args) {
+        System.out.println("Starting up.");
         printMenu();
 
         Hero hero = new Hero(new WalkingStrategy(), new Point(0, 0));
 
-        while (true) {
-            System.out.print("\nEnter your choice (0-4): ");
+        int choice = readChoice();
+        while (choice != 0) {
 
-            int choice = readInt();
-            if (choice == 0) {
-                System.out.println("The end");
-                break;
+            try {
+                MovementStrategy strategy = getStrategy(choice);
+                hero.setStrategy(strategy);
+            } catch (IllegalStateException e) {
+                System.err.println("Internal error: " + e.getMessage());
+                return;
             }
 
-            MovementStrategy strategy = chooseStrategy(choice);
-            hero.setStrategy(strategy);
 
-            Point destination = getRandomPoint();
+            Point destination = randomPoint();
             hero.move(destination);
+
+            choice = readChoice();
         }
 
+        System.out.println("The end.");
         scanner.close();
+        System.out.println("Shutting down.");
     }
 
     private static void printMenu() {
@@ -51,35 +56,36 @@ public class Main {
         System.out.println("0 - Exit");
     }
 
-    private static MovementStrategy chooseStrategy(int choice) {
+    private static int readChoice() {
+        while (true) {
+            System.out.print("\nEnter choice (0–4): ");
+
+            String input = scanner.nextLine();
+
+            if (input.length() == 1) {
+                char c = input.charAt(0);
+
+                if (c >= '0' && c <= '4') {
+                    return c - '0';
+                }
+            }
+
+            System.err.println("Invalid input. Enter number 0–4.");
+
+        }
+    }
+
+    private static MovementStrategy getStrategy(int choice) {
         return switch (choice) {
             case 1 -> new WalkingStrategy();
             case 2 -> new HorseRidingStrategy();
             case 3 -> new FlyingStrategy();
             case 4 -> new TeleportStrategy();
-            default -> null;
+            default -> throw new IllegalStateException("Unexpected value: " + choice);
         };
     }
 
-    private static Point getRandomPoint() {
-        int x = random.nextInt(500);
-        int y = random.nextInt(500);
-        return new Point(x, y);
-    }
-
-    private static int readInt() {
-        while (true) {
-            try {
-                int value = Integer.parseInt(scanner.nextLine());
-                if (value < 0 || value > 4) {
-                    throw new IllegalArgumentException("Number must be between 0-4");
-                }
-                return value;
-            } catch (NumberFormatException e) {
-                System.err.println("Invalid input. Please enter an INTEGER between 0-4!");
-            } catch (IllegalArgumentException e) {
-                System.err.println("Invalid choice! Please enter a number between 0-4!");
-            }
-        }
+    private static Point randomPoint() {
+        return new Point(random.nextInt(500), random.nextInt(500));
     }
 }

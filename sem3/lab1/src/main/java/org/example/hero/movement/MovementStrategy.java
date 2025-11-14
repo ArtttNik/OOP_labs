@@ -1,7 +1,7 @@
 package org.example.hero.movement;
-
-import java.awt.*;
+import org.example.point.Point;
 
 public interface MovementStrategy {
-    void move(Point start, Point end);
+    double move(Point start, Point end);
+    String getName();
 }

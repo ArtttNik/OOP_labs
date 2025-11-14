@@ -1,16 +1,21 @@
 package org.example.hero.movement;
-
-import java.awt.*;
+import org.example.point.Point;
 
 public class HorseRidingStrategy implements MovementStrategy {
     static final int SPEED = 20;
 
     @Override
-    public void move(Point start, Point end) {
+    public double move(Point start, Point end) {
         double distance = start.distance(end);
         double time = distance/SPEED;
 
-        System.out.printf("Riding a horse distance is %.2f km\n", distance);
-        System.out.printf("Riding a horse time is %.2f hours\n", time);
+        System.out.printf("Horse riding: distance %.2f km, time %.2f hours%n", distance, time);
+
+        return distance;
+    }
+
+    @Override
+    public String getName() {
+        return "Horse Riding";
     }
 }
