@@ -1,6 +1,6 @@
 package org.example.hero;
 
-import org.example.hero.movement.MovementStrategy;
+import org.example.hero.movement.*;
 import org.example.point.Point;
 
 
@@ -16,9 +16,9 @@ public class Hero {
         setStrategy(strategy);
     }
 
-    public void setStrategy(MovementStrategy newStrategy) {
+    public void setStrategy(MovementStrategy newStrategy) throws IllegalStateException {
         if (newStrategy == null)
-            return;
+            throw new IllegalStateException("Undefined behaviour because of bad strategy");
 
         if (this.currentStrategy != null && !this.currentStrategy.getName().equals(newStrategy.getName())) {
             strategyChanges++;
@@ -26,6 +26,22 @@ public class Hero {
 
         this.currentStrategy = newStrategy;
     }
+
+    public void setStrategyByChoice(int choice) throws IllegalArgumentException {
+        MovementStrategy newStrategy = createStrategy(choice);
+        setStrategy(newStrategy);
+    }
+
+    private MovementStrategy createStrategy(int choice) throws IllegalArgumentException {
+        return switch (choice) {
+            case 1 -> new WalkingStrategy();
+            case 2 -> new HorseRidingStrategy();
+            case 3 -> new FlyingStrategy();
+            case 4 -> new TeleportStrategy();
+            default -> throw new IllegalArgumentException("Invalid strategy choice: " + choice);
+        };
+    }
+
 
     public void move(Point destination) {
         double distance = currentStrategy.move(currentPoint, destination);

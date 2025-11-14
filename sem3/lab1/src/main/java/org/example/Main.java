@@ -7,6 +7,8 @@ import org.example.point.Point;
 import java.util.Random;
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 /*1.	В компьютерной игре герой (класс Hero) может перемещаться между двумя точками (метод move)
     различными способами: идти пешком, ехать на лошади, лететь и т. п. Реализовать классы,
     позволяющие выбирать и менять в ходе выполнения программы способ перемещения героя, используя
@@ -28,13 +30,13 @@ public class Main {
         while (choice != 0) {
 
             try {
-                MovementStrategy strategy = getStrategy(choice);
-                hero.setStrategy(strategy);
-            } catch (IllegalStateException e) {
-                System.err.println("Internal error: " + e.getMessage());
-                return;
+                hero.setStrategyByChoice(choice);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Error: " + e.getMessage());
+                scanner.close();
+                System.out.println("Shutting down.");
+                exit(1);
             }
-
 
             Point destination = randomPoint();
             hero.move(destination);
@@ -73,16 +75,6 @@ public class Main {
             System.err.println("Invalid input. Enter number 0–4.");
 
         }
-    }
-
-    private static MovementStrategy getStrategy(int choice) {
-        return switch (choice) {
-            case 1 -> new WalkingStrategy();
-            case 2 -> new HorseRidingStrategy();
-            case 3 -> new FlyingStrategy();
-            case 4 -> new TeleportStrategy();
-            default -> throw new IllegalStateException("Unexpected value: " + choice);
-        };
     }
 
     private static Point randomPoint() {
