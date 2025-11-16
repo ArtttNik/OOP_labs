@@ -7,6 +7,6 @@ public class CommonHedgehog extends Hedgehog {
 
     @Override
     public void voice() {
-        System.out.println("CommonHedgehoging: \"phyr, phir, phyir\"");
+        System.out.println("CommonHedgehoging: \"phyr, phir, phyir " + getSound() + '"');
     }
 }

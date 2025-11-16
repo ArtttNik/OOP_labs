@@ -7,6 +7,6 @@ public class Manul extends Feline {
 
     @Override
     public void voice() {
-        System.out.println("Manulling: \"Meow!\"");
+        System.out.println("Manulling: \"Meow! " + getSound() + '"');
     }
 }

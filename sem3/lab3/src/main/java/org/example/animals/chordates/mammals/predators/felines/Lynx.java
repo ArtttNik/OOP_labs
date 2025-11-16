@@ -9,6 +9,6 @@ public class Lynx extends Feline {
 
     @Override
     public void voice() {
-        System.out.println("Is is correct to spell \"Linux\""); //Rrow!
+        System.out.println("Is is correct to spell \"Linux " + getSound() + '"'); //Rrow!
     }
 }
