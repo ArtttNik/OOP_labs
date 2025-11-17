@@ -1,14 +1,6 @@
 package org.example.point;
 
-public class Point {
-
-    private final double x;
-    private final double y;
-
-    public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
+public record Point(double x, double y) {
 
     public double distance(Point other) {
         double dx = other.x - this.x;
