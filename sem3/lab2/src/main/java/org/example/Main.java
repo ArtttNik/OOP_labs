@@ -1,7 +1,7 @@
 package org.example;
 
 import org.example.invoker.Invoker;
-import org.example.target.MyClass;
+import org.example.annotation.ClassWithMethods;
 
 /*2.	Написать аннотацию с целочисленным параметром. Создать класс, содержащий публичные, защищенные
     и приватные методы (2-3 каждого вида) с параметрами, аннотировать любые из них. Вызвать из другого класса
@@ -10,7 +10,8 @@ import org.example.target.MyClass;
 
 public class Main {
     public static void main(String[] args) {
-        MyClass object = new MyClass();
+        ClassWithMethods object = new ClassWithMethods();
+
         try {
             Invoker.invokeAnnotatedMethods(object);
         } catch (Exception e) {

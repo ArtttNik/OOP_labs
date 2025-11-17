@@ -9,5 +9,5 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Repeat {
-    int value() default 1;
+    int value() default 0;
 }
