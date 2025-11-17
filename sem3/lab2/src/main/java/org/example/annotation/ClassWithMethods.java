@@ -28,10 +28,16 @@ public class ClassWithMethods {
         System.err.println("publicWithString - should not be called: " + msg);
     }
 
+    protected void protectedNoAnnotation() {
+        System.err.println("I`m without annotation =)");
+    }
+
     @Repeat()
     protected void protectedVoidRepeat0() {
         System.err.println("protectedVoidRepeat0 - should not be called Repeat(0): text=" + text);
     }
+
+
 
     @Repeat(1)
     protected void protectedVoid() {

@@ -5,7 +5,7 @@ public class F1Team {
     private String team;
     private int points;
 
-    public F1Team(User driver, String team, int points) {
+    private F1Team(User driver, String team, int points) {
         this.driver = driver;
         this.team = team;
         this.points = points;

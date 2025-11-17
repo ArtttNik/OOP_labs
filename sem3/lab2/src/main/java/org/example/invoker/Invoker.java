@@ -36,6 +36,7 @@ public class Invoker {
         for (int i = 0; i < types.length; i++) {
             arr[i] = createValue(types[i]);
         }
+
         return arr;
     }
 
@@ -46,6 +47,9 @@ public class Invoker {
 
         if (type == long.class || type == Long.class)
             return (long) random.nextInt(500);
+
+        if (type == byte.class || type == Byte.class)
+            return (byte) random.nextInt(20);
 
         if (type == double.class || type == Double.class)
             return random.nextDouble();
@@ -59,20 +63,25 @@ public class Invoker {
         if (type == char.class || type == Character.class)
             return (char) ('a' + random.nextInt(26));
 
-        if (type == String.class)
-            return "auto text";
+        if (type == String.class) {
+            char c = (char) ('a' + random.nextInt(26));
+            return "auto_text_" + c;
+        }
 
         return createObjectRecursively(type);
     }
 
     private static Object createObjectRecursively(Class<?> type) throws Exception {
-
         if (type.isPrimitive())
             return 0;
 
         if (type.isInterface() || Modifier.isAbstract(type.getModifiers()))
             throw new IllegalArgumentException("You cant make an object from interface or abstract class =/");
 
+        return createWithParams(type);
+    }
+
+    private static Object createWithParams(Class<?> type) throws Exception {
         Constructor<?> constructor;
 
         try {
@@ -92,4 +101,6 @@ public class Invoker {
 
         return constructor.newInstance(params);
     }
+
+
 }
