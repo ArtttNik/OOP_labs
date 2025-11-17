@@ -18,4 +18,9 @@ public class HorseRidingStrategy implements MovementStrategy {
     public String getName() {
         return "Horse Riding";
     }
+
+    @Override
+    public int getSpeed() {
+        return SPEED;
+    }
 }

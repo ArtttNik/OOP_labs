@@ -7,12 +7,6 @@ import org.example.point.Point;
 import java.util.Random;
 import java.util.Scanner;
 
-/*1.	В компьютерной игре герой (класс Hero) может перемещаться между двумя точками (метод move)
-    различными способами: идти пешком, ехать на лошади, лететь и т. п. Реализовать классы,
-    позволяющие выбирать и менять в ходе выполнения программы способ перемещения героя, используя
-    паттерн “стратегия” (strategy). Продемонстрировать работу реализованных классов.
-*/
-
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -22,18 +16,48 @@ public class Main {
         System.out.println("Starting up.");
         printMenu();
 
-        Hero hero = new Hero(new WalkingStrategy(), new Point(0, 0));
+        Hero hero = new Hero(null, new Point(0, 0));
 
         int choice = readChoice();
         while (choice != 0) {
             try {
-                hero.setStrategyByChoice(choice);
+                switch (choice) {
+                    case 5:
+                        String currentStrategy = hero.getCurrentStrategyName();
+                        if (currentStrategy == null) {
+                            System.out.println("Current strategy: Not selected");
+                        } else {
+                            System.out.println("Current strategy: " + currentStrategy);
+                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " units");
+                        }
+                        break;
+
+                    case 6:
+                        if (hero.getCurrentStrategyName() == null) {
+                            System.err.println("Cannot move without selected strategy. Please choose strategy 1-4 first.");
+                        } else {
+                            Point destination = randomPoint();
+                            hero.move(destination);
+                        }
+                        break;
+
+                    default:
+                        String previousStrategy = hero.getCurrentStrategyName();
+                        hero.setStrategyByChoice(choice);
+                        String newStrategy = hero.getCurrentStrategyName();
+
+                        if (previousStrategy != null && previousStrategy.equals(newStrategy)) {
+                            System.out.println("Method not changed. Current method: " + newStrategy);
+                        } else {
+                            System.out.println("Selected strategy: " + newStrategy);
+                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " units");
+                        }
+                        System.out.println("Current movement method: " + newStrategy);
+                        break;
+                }
             } catch (IllegalArgumentException e) {
                 System.err.println("Error: " + e.getMessage());
             }
-
-            Point destination = randomPoint();
-            hero.move(destination);
 
             choice = readChoice();
         }
@@ -44,30 +68,31 @@ public class Main {
     }
 
     private static void printMenu() {
-        System.out.println("\nChoose movement strategy:");
-        System.out.println("1 - Walking");
-        System.out.println("2 - Horse Riding");
-        System.out.println("3 - Flying");
-        System.out.println("4 - Teleporting");
+        System.out.println("\nChoose action:");
+        System.out.println("1 - Set strategy as \"Walking\"");
+        System.out.println("2 - Set strategy as \"Horse Riding\"");
+        System.out.println("3 - Set strategy as \"Flying\"");
+        System.out.println("4 - Set strategy as \"Teleporting\"");
+        System.out.println("5 - Display current strategy");
+        System.out.println("6 - Process moving");
         System.out.println("0 - Exit");
     }
 
     private static int readChoice() {
         while (true) {
-            System.out.print("\nEnter choice (0–4): ");
+            System.out.print("\nEnter choice (0-6): ");
 
             String input = scanner.nextLine();
 
             if (input.length() == 1) {
                 char c = input.charAt(0);
 
-                if (c >= '0' && c <= '4') {
+                if (c >= '0' && c <= '6') {
                     return c - '0';
                 }
             }
 
-            System.err.println("Invalid input. Enter number 0–4.");
-
+            System.err.println("Invalid input. Enter number 0-6.");
         }
     }
 

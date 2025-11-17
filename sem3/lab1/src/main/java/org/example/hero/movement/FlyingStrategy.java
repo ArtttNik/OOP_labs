@@ -18,4 +18,9 @@ public class FlyingStrategy implements MovementStrategy {
     public String getName() {
         return "Flying";
     }
+
+    @Override
+    public int getSpeed() {
+        return SPEED;
+    }
 }

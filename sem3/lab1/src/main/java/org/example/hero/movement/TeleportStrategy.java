@@ -18,4 +18,9 @@ public class TeleportStrategy implements MovementStrategy {
     public String getName() {
         return "Teleporting";
     }
+
+    @Override
+    public int getSpeed() {
+        return SPEED;
+    }
 }

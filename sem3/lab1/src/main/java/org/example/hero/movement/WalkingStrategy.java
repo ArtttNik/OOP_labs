@@ -18,4 +18,9 @@ public class WalkingStrategy  implements MovementStrategy {
     public String getName() {
         return "Walking";
     }
+
+    @Override
+    public int getSpeed() {
+        return SPEED;
+    }
 }
