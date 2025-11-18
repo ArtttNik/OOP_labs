@@ -13,55 +13,70 @@ public class Main {
     private static final Random random = new Random();
 
     public static void main(String[] args) {
-        System.out.println("Starting up.");
-
         Hero hero = new Hero(new WalkingStrategy(), new Point(0, 0));
 
-        System.out.println("Current strategy: " + hero.getCurrentStrategyName());
-        System.out.println("Starting point is " + hero.getCurrentPoint());
+        System.out.println("Starting up.");
+        showInitialInfo(hero);
 
         printMenu();
 
+        run(hero);
+
+        System.out.println("The end.");
+        scanner.close();
+        System.out.println("Shutting down.");
+    }
+
+    private static void run(Hero hero) {
         int choice = readChoice();
         while (choice != 0) {
             try {
-                switch (choice) {
-                    case 5:
-                        String currentStrategy = hero.getCurrentStrategyName();
-
-                        System.out.println("Current strategy: " + currentStrategy);
-                        System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " km");
-                        break;
-
-                    case 6:
-                        Point destination = randomPoint();
-                        hero.move(destination);
-                        break;
-
-                    default:
-                        String previousStrategy = hero.getCurrentStrategyName();
-                        hero.setStrategyByChoice(choice);
-                        String newStrategy = hero.getCurrentStrategyName();
-
-                        if (previousStrategy.equals(newStrategy)) {
-                            System.out.println("Method not changed. Current method: " + newStrategy);
-                        } else {
-                            System.out.println("Selected strategy: " + newStrategy);
-                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " km");
-                        }
-                        System.out.println("Current movement method: " + newStrategy);
-                        break;
-                }
+                handleChoice(hero, choice);
             } catch (IllegalArgumentException e) {
                 System.err.println("Error: " + e.getMessage());
             }
 
             choice = readChoice();
         }
+    }
 
-        System.out.println("The end.");
-        scanner.close();
-        System.out.println("Shutting down.");
+    private static void handleChoice(Hero hero, int choice) {
+        switch (choice) {
+            case 5 -> displayCurrentStrategy(hero);
+            case 6 -> processMovement(hero);
+            default -> changeStrategy(hero, choice);
+        }
+    }
+
+
+    private static void showInitialInfo(Hero hero) {
+        System.out.println("Current strategy: " + hero.getCurrentStrategy().getName());
+        System.out.println("Starting point is " + hero.getCurrentPoint());
+    }
+
+    private static void displayCurrentStrategy(Hero hero) {
+        System.out.println("Current strategy: " + hero.getCurrentStrategy().getName());
+        System.out.println("Speed: " + hero.getCurrentStrategy().getSpeed() + " km");
+    }
+
+    private static void processMovement(Hero hero) {
+        Point destination = randomPoint();
+        hero.move(destination);
+    }
+
+    private static void changeStrategy(Hero hero, int choice) {
+        String before = hero.getCurrentStrategy().getName();
+
+        hero.setStrategyByChoice(choice);
+
+        String after = hero.getCurrentStrategy().getName();
+
+        if (before.equals(after)) {
+            System.out.println("Method not changed. Current method: " + after);
+        } else {
+            System.out.println("Selected strategy: " + after);
+            System.out.println("Speed: " + hero.getCurrentStrategy().getSpeed() + " km");
+        }
     }
 
     private static void printMenu() {
@@ -83,7 +98,6 @@ public class Main {
 
             if (input.length() == 1) {
                 char c = input.charAt(0);
-
                 if (c >= '0' && c <= '6') {
                     return c - '0';
                 }

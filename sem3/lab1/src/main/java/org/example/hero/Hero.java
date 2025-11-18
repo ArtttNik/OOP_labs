@@ -19,6 +19,10 @@ public class Hero {
         return currentStrategy.getName();
     }
 
+    public MovementStrategy getCurrentStrategy() {
+        return currentStrategy;
+    }
+
     public double getCurrentStrategySpeed() {
         return currentStrategy.getSpeed();
     }
