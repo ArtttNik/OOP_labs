@@ -14,9 +14,13 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Starting up.");
-        printMenu();
 
-        Hero hero = new Hero(null, new Point(0, 0));
+        Hero hero = new Hero(new WalkingStrategy(), new Point(0, 0));
+
+        System.out.println("Current strategy: " + hero.getCurrentStrategyName());
+        System.out.println("Starting point is " + hero.getCurrentPoint());
+
+        printMenu();
 
         int choice = readChoice();
         while (choice != 0) {
@@ -24,21 +28,14 @@ public class Main {
                 switch (choice) {
                     case 5:
                         String currentStrategy = hero.getCurrentStrategyName();
-                        if (currentStrategy == null) {
-                            System.out.println("Current strategy: Not selected");
-                        } else {
-                            System.out.println("Current strategy: " + currentStrategy);
-                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " units");
-                        }
+
+                        System.out.println("Current strategy: " + currentStrategy);
+                        System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " km");
                         break;
 
                     case 6:
-                        if (hero.getCurrentStrategyName() == null) {
-                            System.err.println("Cannot move without selected strategy. Please choose strategy 1-4 first.");
-                        } else {
-                            Point destination = randomPoint();
-                            hero.move(destination);
-                        }
+                        Point destination = randomPoint();
+                        hero.move(destination);
                         break;
 
                     default:
@@ -46,11 +43,11 @@ public class Main {
                         hero.setStrategyByChoice(choice);
                         String newStrategy = hero.getCurrentStrategyName();
 
-                        if (previousStrategy != null && previousStrategy.equals(newStrategy)) {
+                        if (previousStrategy.equals(newStrategy)) {
                             System.out.println("Method not changed. Current method: " + newStrategy);
                         } else {
                             System.out.println("Selected strategy: " + newStrategy);
-                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " units");
+                            System.out.println("Speed: " + hero.getCurrentStrategySpeed() + " km");
                         }
                         System.out.println("Current movement method: " + newStrategy);
                         break;

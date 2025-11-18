@@ -16,17 +16,15 @@ public class Hero {
     }
 
     public String getCurrentStrategyName() {
-        if (currentStrategy == null) {
-            return null;
-        }
         return currentStrategy.getName();
     }
 
     public double getCurrentStrategySpeed() {
-        if (currentStrategy == null) {
-            return 0.0;
-        }
         return currentStrategy.getSpeed();
+    }
+
+    public Point getCurrentPoint() {
+        return currentPoint;
     }
 
     public void setStrategy(MovementStrategy newStrategy) throws IllegalStateException {
@@ -37,6 +35,7 @@ public class Hero {
         if (this.currentStrategy != null && !this.currentStrategy.getName().equals(newStrategy.getName())) {
             strategyChanges++;
         }
+
 
         this.currentStrategy = newStrategy;
     }
@@ -57,10 +56,6 @@ public class Hero {
     }
 
     public void move(Point destination) {
-        if (currentStrategy == null) {
-            throw new IllegalStateException("Cannot move without strategy");
-        }
-
         double distance = currentStrategy.move(currentPoint, destination);
         totalDistance += distance;
         currentPoint = destination;
