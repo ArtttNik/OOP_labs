@@ -16,9 +16,8 @@ public class Main {
         Hero hero = new Hero(new WalkingStrategy(), new Point(0, 0));
 
         System.out.println("Starting up.");
-        showInitialInfo(hero);
-
         printMenu();
+        showInitialInfo(hero);
 
         run(hero);
 
@@ -65,29 +64,28 @@ public class Main {
     }
 
     private static void changeStrategy(Hero hero, int choice) {
-        String before = hero.getCurrentStrategy().getName();
-
+        MovementStrategy before = hero.getCurrentStrategy();
         hero.setStrategyByChoice(choice);
+        MovementStrategy after = hero.getCurrentStrategy();
 
-        String after = hero.getCurrentStrategy().getName();
-
-        if (before.equals(after)) {
-            System.out.println("Method not changed. Current method: " + after);
+        if (before.getClass() == after.getClass()) {
+            System.out.println("Method not changed. Current method: " + after.getName());
         } else {
-            System.out.println("Selected strategy: " + after);
-            System.out.println("Speed: " + hero.getCurrentStrategy().getSpeed() + " km");
+            System.out.println("Selected strategy: " + after.getName());
+            System.out.println("Speed: " + after.getSpeed() + " km");
         }
+
     }
 
     private static void printMenu() {
-        System.out.println("\nChoose action:");
+        System.out.println("Choose action:");
         System.out.println("1 - Set strategy as \"Walking\"");
         System.out.println("2 - Set strategy as \"Horse Riding\"");
         System.out.println("3 - Set strategy as \"Flying\"");
         System.out.println("4 - Set strategy as \"Teleporting\"");
         System.out.println("5 - Display current strategy");
         System.out.println("6 - Process moving");
-        System.out.println("0 - Exit");
+        System.out.println("0 - Exit\n");
     }
 
     private static int readChoice() {

@@ -15,16 +15,8 @@ public class Hero {
         this.currentStrategy = strategy;
     }
 
-    public String getCurrentStrategyName() {
-        return currentStrategy.getName();
-    }
-
     public MovementStrategy getCurrentStrategy() {
         return currentStrategy;
-    }
-
-    public double getCurrentStrategySpeed() {
-        return currentStrategy.getSpeed();
     }
 
     public Point getCurrentPoint() {
@@ -36,9 +28,10 @@ public class Hero {
             throw new IllegalStateException("Cannot set null strategy");
         }
 
-        if (this.currentStrategy != null && !this.currentStrategy.getName().equals(newStrategy.getName())) {
+        if (this.currentStrategy.getClass() != newStrategy.getClass()) {
             strategyChanges++;
         }
+
 
 
         this.currentStrategy = newStrategy;
