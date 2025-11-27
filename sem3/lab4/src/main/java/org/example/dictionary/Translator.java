@@ -1,120 +1,85 @@
 package org.example.dictionary;
 
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 public class Translator {
     private final Map<String, String> dictionary;
-    private final int maxPhraseLength;
+    private final List<String> sortedKeys;
 
     public Translator(Map<String, String> dictionary) {
         this.dictionary = new HashMap<>();
-        int maxLength = 1;
-
         for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-            String key = entry.getKey().toLowerCase();
-            this.dictionary.put(key, entry.getValue());
-            int wordCount = key.trim().isEmpty() ? 0 : key.split("\\s+").length;
-            maxLength = Math.max(maxLength, wordCount);
+            this.dictionary.put(entry.getKey().toLowerCase(), entry.getValue());
         }
-        this.maxPhraseLength = maxLength;
+
+        this.sortedKeys = new ArrayList<>(this.dictionary.keySet());
+        sortedKeys.sort((a, b) -> {
+            int lenDiff = b.length() - a.length();
+            if (lenDiff != 0) return lenDiff;
+            return b.split("\\s+").length - a.split("\\s+").length;
+        });
     }
 
     public String translateText(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
+        if (text == null || text.isEmpty()) return text;
 
-        String[] tokens = text.split("(?<=\\s)|(?=\\s)");
         StringBuilder result = new StringBuilder();
-        int pos = 0;
+        int i = 0;
 
-        while (pos < tokens.length) {
-            String token = tokens[pos];
-
-            if (token.trim().isEmpty()) {
-                result.append(token);
-                pos++;
+        while (i < text.length()) {
+            char c = text.charAt(i);
+            if (!Character.isLetter(c)) {
+                result.append(c);
+                i++;
                 continue;
             }
 
-            String word = token.replaceAll("^\\P{L}+|\\P{L}+$", "");
-            if (word.isEmpty()) {
-                result.append(token);
-                pos++;
-                continue;
+            int j = i;
+            while (j < text.length() && (Character.isLetter(text.charAt(j)) || Character.isWhitespace(text.charAt(j)))) {
+                j++;
             }
 
-            String translation = findTranslation(tokens, pos);
-            if (translation != null) {
-                result.append(translation);
-                pos += countWords(translation);
+            String candidate = text.substring(i, j);
+            String bestMatch = null;
+            String bestTranslation = null;
+
+            for (String key : sortedKeys) {
+                if (candidate.toLowerCase().startsWith(key)) {
+                    if (key.length() < candidate.length()) {
+                        char nextChar = candidate.charAt(key.length());
+                        if (Character.isLetter(nextChar)) {
+                            continue;
+                        }
+                    }
+                    bestMatch = key;
+                    bestTranslation = dictionary.get(key);
+                    break;
+                }
+            }
+
+            if (bestMatch != null) {
+                String originalPhrase = text.substring(i, i + bestMatch.length());
+                String translated = applyOriginalCase(originalPhrase, bestTranslation);
+                result.append(translated);
+                i += bestMatch.length();
             } else {
-                result.append(token);
-                pos++;
+                result.append(c);
+                i++;
             }
         }
 
         return result.toString();
     }
 
-    private String findTranslation(String[] tokens, int start) {
-        for (int length = maxPhraseLength; length >= 1; length--) {
-            String phrase = buildPhrase(tokens, start, length);
-            if (phrase != null) {
-                String translation = dictionary.get(phrase);
-                if (translation != null) {
-                    return formatTranslation(tokens, start, start + length - 1, translation);
-                }
+    private String applyOriginalCase(String original, String translation) {
+        if (original.isEmpty()) return translation;
+        if (Character.isUpperCase(original.charAt(0))) {
+            if (translation.length() == 1) {
+                return translation.toUpperCase();
+            } else {
+                return Character.toUpperCase(translation.charAt(0)) + translation.substring(1);
             }
         }
-        return null;
-    }
-
-    private String buildPhrase(String[] tokens, int start, int length) {
-        List<String> words = new ArrayList<>();
-        int pos = start;
-        int collected = 0;
-
-        while (pos < tokens.length && collected < length) {
-            String token = tokens[pos];
-            if (!token.trim().isEmpty()) {
-                String word = token.replaceAll("^\\P{L}+|\\P{L}+$", "");
-                if (word.isEmpty()) {
-                    return null;
-                }
-                words.add(word.toLowerCase());
-                collected++;
-            }
-            pos++;
-        }
-
-        return words.size() == length ? String.join(" ", words) : null;
-    }
-
-    private String formatTranslation(String[] tokens, int start, int end, String translation) {
-        String first = tokens[start];
-        String last = tokens[end];
-
-        String prefix = extractPrefix(first);
-        String suffix = extractSuffix(last);
-
-        return prefix + translation + suffix;
-    }
-
-    private String extractPrefix(String token) {
-        Matcher m = Pattern.compile("^(\\P{L}+)").matcher(token);
-        return m.find() ? m.group(1) : "";
-    }
-
-    private String extractSuffix(String token) {
-        Matcher m = Pattern.compile("(\\P{L}+)$").matcher(token);
-        return m.find() ? m.group(1) : "";
-    }
-
-    private int countWords(String text) {
-        String trimmed = text.trim();
-        return trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;
+        return translation;
     }
 }

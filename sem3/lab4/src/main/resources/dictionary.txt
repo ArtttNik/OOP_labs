@@ -3,7 +3,7 @@ or | или
 not | не
 that | что
 is | есть
-question | вопрос
+QueSTioN | вопрос
 shall | должен
 I | я
 compare | сравнивать
@@ -17,6 +17,7 @@ star | звезда
 how | как
 wonder | удивляться
 what | что
+you | ты
 you | ты
 are | есть
 up | вверх
@@ -33,7 +34,7 @@ this | этот
 cruel | жестокий
 winter | зима
 wind | ветер
-blows | дует
+blow | дует
 rough | суровый
 rose | роза
 love | любовь
@@ -97,3 +98,6 @@ put off | откладывать
 put up | размещать
 put down | записывать
 put out | тушить
+will | будешь
+fade | судьба
+grow | расти
