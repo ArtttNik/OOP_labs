@@ -3,21 +3,16 @@ package org.example.dictionary;
 import java.util.*;
 
 public class Translator {
-    private final Map<String, String> dictionary;
-    private final List<String> sortedKeys;
+    private final Map<String, String> sortedDictionary;
 
     public Translator(Map<String, String> dictionary) {
-        this.dictionary = new HashMap<>();
-        for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-            this.dictionary.put(entry.getKey().toLowerCase(), entry.getValue());
-        }
+        List<String> sortedKeys = new ArrayList<>(dictionary.keySet());
+        sortedKeys.sort((a, b) -> Integer.compare(b.length(), a.length()));
 
-        this.sortedKeys = new ArrayList<>(this.dictionary.keySet());
-        sortedKeys.sort((a, b) -> {
-            int lenDiff = b.length() - a.length();
-            if (lenDiff != 0) return lenDiff;
-            return b.split("\\s+").length - a.split("\\s+").length;
-        });
+        this.sortedDictionary = new LinkedHashMap<>();
+        for (String key : sortedKeys) {
+            this.sortedDictionary.put(key, dictionary.get(key));
+        }
     }
 
     public String translateText(String text) {
@@ -34,37 +29,40 @@ public class Translator {
                 continue;
             }
 
-            int j = i;
-            while (j < text.length() && (Character.isLetter(text.charAt(j)) || Character.isWhitespace(text.charAt(j)))) {
-                j++;
-            }
+            boolean matchFound = false;
 
-            String candidate = text.substring(i, j);
-            String bestMatch = null;
-            String bestTranslation = null;
+            for (Map.Entry<String, String> entry : sortedDictionary.entrySet()) {
+                String key = entry.getKey();
+                String translation = entry.getValue();
+                int keyLength = key.length();
+                int endIndex = i + keyLength;
 
-            for (String key : sortedKeys) {
-                if (candidate.toLowerCase().startsWith(key)) {
-                    if (key.length() < candidate.length()) {
-                        char nextChar = candidate.charAt(key.length());
-                        if (Character.isLetter(nextChar)) {
-                            continue;
-                        }
-                    }
-                    bestMatch = key;
-                    bestTranslation = dictionary.get(key);
-                    break;
-                }
-            }
+                if (i > 0 && Character.isLetter(text.charAt(i - 1)))
+                    continue;
 
-            if (bestMatch != null) {
-                String originalPhrase = text.substring(i, i + bestMatch.length());
-                String translated = applyOriginalCase(originalPhrase, bestTranslation);
+                if (endIndex > text.length())
+                    continue;
+
+                String candidate = text.substring(i, endIndex);
+                if (!candidate.equalsIgnoreCase(key))
+                    continue;
+
+                if (endIndex < text.length() && Character.isLetter(text.charAt(endIndex))) continue;
+
+                String translated = applyOriginalCase(candidate, translation);
                 result.append(translated);
-                i += bestMatch.length();
-            } else {
-                result.append(c);
-                i++;
+                i += keyLength;
+                matchFound = true;
+                break;
+            }
+
+            if (!matchFound) {
+                int j = i;
+                while (j < text.length() && Character.isLetter(text.charAt(j))) {
+                    j++;
+                }
+                result.append(text, i, j);
+                i = j;
             }
         }
 
@@ -72,14 +70,16 @@ public class Translator {
     }
 
     private String applyOriginalCase(String original, String translation) {
-        if (original.isEmpty()) return translation;
-        if (Character.isUpperCase(original.charAt(0))) {
-            if (translation.length() == 1) {
-                return translation.toUpperCase();
-            } else {
-                return Character.toUpperCase(translation.charAt(0)) + translation.substring(1);
-            }
+        if (original.isEmpty())
+            return translation;
+
+        if (original.equals(original.toUpperCase())) {
+            return translation.toUpperCase();
+        } else if (Character.isUpperCase(original.charAt(0))) {
+            return Character.toUpperCase(translation.charAt(0)) +
+                    (translation.length() > 1 ? translation.substring(1).toLowerCase() : "");
         }
-        return translation;
+
+        return translation.toLowerCase();
     }
 }
