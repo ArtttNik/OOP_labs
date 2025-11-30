@@ -26,108 +26,93 @@ import java.util.*;
    - segregate(Ежовые, Насекомоядные, Хищные, Хищные)
 Продемонстрировать работу метода
 */
+
 class Main {
+
+    public static final String METHOD_SELECTION_PROMPT = """
+            Select the method parameters:
+            1. segregate(mammals, erinaceidaes, felidaes, carnivoras)
+            2. segregate(carnivoras, chordates, pallasCats, felidaes)
+            3. segregate(erinaceidaes, eulipotyphlas, carnivoras, carnivoras)
+            ELSE. Exit""";
+
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void segregate(Collection<? extends Animal> src,
                                  Collection<? super Hedgehog> col1,
                                  Collection<? super Manul> col2,
                                  Collection<? super Lynx> col3) {
-        for (Animal a : src) {
-            if (a instanceof Hedgehog) {
-                col1.add((Hedgehog) a);
-            } else if (a instanceof Manul) {
-                col2.add((Manul) a);
-            } else if (a instanceof Lynx) {
-                col3.add((Lynx) a);
+
+        Objects.requireNonNull(src);
+        Objects.requireNonNull(col1);
+        Objects.requireNonNull(col2);
+        Objects.requireNonNull(col3);
+
+        for (Animal a : new ArrayList<>(src)) {
+            switch (a) {
+                case Hedgehog h -> col1.add(h);
+                case Manul m -> col2.add(m);
+                case Lynx l -> col3.add(l);
+                default -> System.out.println(a + "does not match Manul, Lynx or Hedgehog");
             }
         }
     }
 
     public static void main(String[] args) {
-        System.out.println("======");
+
         List<Mammal> mammals = new ArrayList<>();
         mammals.add(new CommonHedgehog("hiss", 2, true));
         mammals.add(new Manul("meow", 3, false));
         mammals.add(new Lynx("roar", 4, false));
         mammals.add(new CommonHedgehog("puff", 1, true));
-        System.out.println("Before: Mammals size: " + mammals.size());
 
-        List<Hedgehog> hedgehogs = new ArrayList<>();
-        List<Feline> felinesForManuls = new ArrayList<>();
-        List<Predator> predatorsForLynx = new ArrayList<>();
+        List<Predator> carnivoras = new ArrayList<>();
+        carnivoras.add(new Manul("purr", 5, false));
+        carnivoras.add(new Lynx("growl", 6, false));
 
-        segregate(mammals, hedgehogs, felinesForManuls, predatorsForLynx);
-
-        System.out.println("After: Mammals size: " + mammals.size());
-        System.out.println("Hedgehogs size: " + hedgehogs.size());
-        System.out.println("Felines (manuls) size: " + felinesForManuls.size());
-        System.out.println("Predators (lynx) size: " + predatorsForLynx.size());
-
-        System.out.println("Voices after segregation:");
-        for (Hedgehog h : hedgehogs) {
-            h.voice();
-        }
-        for (Feline f : felinesForManuls) {
-            f.voice();
-        }
-        for (Predator p : predatorsForLynx) {
-            p.voice();
-        }
-        System.out.println();
-
-        System.out.println("======");
-        List<Predator> predators = new ArrayList<>();
-        predators.add(new Manul("purr", 5, false));
-        predators.add(new Lynx("growl", 6, false));
-        System.out.println("Before: Predators size: " + predators.size());
+        List<Hedgehog> erinaceidaes = new ArrayList<>();
+        List<Feline> felidaes = new ArrayList<>();
+        List<Predator> carnivoras2 = new ArrayList<>();
 
         List<Chordate> chordates = new ArrayList<>();
-        List<Manul> manuls = new ArrayList<>();
-        List<Feline> felines = new ArrayList<>();
+        List<Manul> pallasCats = new ArrayList<>();
+        List<Feline> felidaes2 = new ArrayList<>();
 
-        segregate(predators, chordates, manuls, felines);
+        List<Hedgehog> erinaceidaesSrc = new ArrayList<>();
+        erinaceidaesSrc.add(new CommonHedgehog("sniff", 7, true));
 
-        System.out.println("After: Predators size: " + predators.size());
-        System.out.println("Chordates (hedgehogs) size: " + chordates.size());
-        System.out.println("Manuls size: " + manuls.size());
-        System.out.println("Felines (lynx) size: " + felines.size());
+        List<Insectivore> eulipotyphlas = new ArrayList<>();
+        List<Predator> carnivoras3 = new ArrayList<>();
+        List<Predator> carnivoras4 = new ArrayList<>();
 
-        System.out.println("Voices after segregation:");
-        for (Chordate c : chordates) {
-            c.voice();
-        }
-        for (Manul m : manuls) {
-            m.voice();
-        }
-        for (Feline f : felines) {
-            f.voice();
-        }
-        System.out.println();
+        while (true) {
+            System.out.println(METHOD_SELECTION_PROMPT);
+            String option = scanner.nextLine();
 
-        System.out.println("======");
-        List<Hedgehog> hedgehogsSrc = new ArrayList<>();
-        hedgehogsSrc.add(new CommonHedgehog("sniff", 7, true));
-        System.out.println("Before: Hedgehogs size: " + hedgehogsSrc.size());
-
-        List<Insectivore> insectivores = new ArrayList<>();
-        List<Predator> predsForManuls = new ArrayList<>();
-        List<Predator> predsForLynx = new ArrayList<>();
-
-        segregate(hedgehogsSrc, insectivores, predsForManuls, predsForLynx);
-
-        System.out.println("After: Hedgehogs size: " + hedgehogsSrc.size());
-        System.out.println("Insectivores (hedgehogs) size: " + insectivores.size());
-        System.out.println("Predators (manuls) size: " + predsForManuls.size());
-        System.out.println("Predators (lynx) size: " + predsForLynx.size());
-
-        System.out.println("Voices after segregation:");
-        for (Insectivore i : insectivores) {
-            i.voice();
-        }
-        for (Predator p : predsForManuls) {
-            p.voice();
-        }
-        for (Predator p : predsForLynx) {
-            p.voice();
+            switch (option) {
+                case "1" -> {
+                    segregate(mammals, erinaceidaes, felidaes, carnivoras2);
+                    erinaceidaes.forEach(Animal::voice);
+                    felidaes.forEach(Animal::voice);
+                    carnivoras2.forEach(Animal::voice);
+                }
+                case "2" -> {
+                    segregate(carnivoras, chordates, pallasCats, felidaes2);
+                    chordates.forEach(Animal::voice);
+                    pallasCats.forEach(Animal::voice);
+                    felidaes2.forEach(Animal::voice);
+                }
+                case "3" -> {
+                    segregate(erinaceidaesSrc, eulipotyphlas, carnivoras3, carnivoras4);
+                    eulipotyphlas.forEach(Animal::voice);
+                    carnivoras3.forEach(Animal::voice);
+                    carnivoras4.forEach(Animal::voice);
+                }
+                default -> {
+                    System.out.println("The end");
+                    return;
+                }
+            }
         }
     }
 }

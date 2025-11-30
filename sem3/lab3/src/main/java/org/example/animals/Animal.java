@@ -19,7 +19,7 @@ public abstract class Animal {
         return age;
     }
 
-    public boolean getEatality() { //как сказать одним словом не знаю, будет так =)
+    public boolean getEatality() {
         return canBeEatenByPredators;
     }
 
