@@ -27,18 +27,23 @@ class Main {
     public static void segregate(Collection<? extends Animal> src,
                                  Collection<? super Hedgehog> col1,
                                  Collection<? super Manul> col2,
-                                 Collection<? super Lynx> col3) {
+                                 Collection<? super Lynx> col3)
+    throws NullPointerException {
 
         if (src == null)
-            throw new IllegalArgumentException("src is null");
+            throw new NullPointerException("src is null");
         if (col1 == null)
-            throw new IllegalArgumentException("col1 is null");
+            throw new NullPointerException("col1 is null");
         if (col2 == null)
-            throw new IllegalArgumentException("col2 is null");
+            throw new NullPointerException("col2 is null");
         if (col3 == null)
-            throw new IllegalArgumentException("col3 is null");
+            throw new NullPointerException("col3 is null");
 
         for (Animal a : new ArrayList<>(src)) {
+            if (a == null) {
+                throw new NullPointerException("src contains null element");
+            }
+
             switch (a) {
                 case Hedgehog h -> col1.add(h);
                 case Manul m -> col2.add(m);
@@ -70,8 +75,6 @@ class Main {
         List<Feline> felines = new ArrayList<>();
         List<Predator> predators = new ArrayList<>();
         List<Insectivore> insectivores = new ArrayList<>();
-
-
 
         while (true) {
             System.out.println(METHOD_SELECTION_PROMPT);
@@ -108,7 +111,7 @@ class Main {
                         return;
                     }
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (NullPointerException e) {
                 System.err.println("ERROR: " + e.getMessage());
             }
         }
