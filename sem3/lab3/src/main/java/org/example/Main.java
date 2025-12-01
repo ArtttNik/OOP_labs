@@ -13,27 +13,13 @@ import org.example.animals.chordates.mammals.predators.felines.Manul;
 
 import java.util.*;
 
-/* 3.
-Создать метод segregate вида:
-   - segregate(SrcCollection, Collection1, Collection2, Collection3)
-Где:
-   - SrcCollection – исходная коллекция животных
-   - Collection1, Collection2, Collection3 – коллекции, в которые должны быть распределены
-     соответственно ежи, манулы и рыси из SrcCollection
-Необходимо, чтобы была возможность вызвать метод следующими способами:
-   - segregate(Млекопитающие, Ежовые, Кошачьи, Хищные)
-   - segregate(Хищные, Хордовые, Манулы, Кошачьи)
-   - segregate(Ежовые, Насекомоядные, Хищные, Хищные)
-Продемонстрировать работу метода
-*/
-
 class Main {
 
     public static final String METHOD_SELECTION_PROMPT = """
             \nSelect the method parameters:
-            1. segregate(mammalsSrc, hedgehogs1, felines1, predators1)
-            2. segregate(predatorsSrc, chordates2, manuls2, felines2)
-            3. segregate(hedgehogsSrc, insectivores3, predators3, predators4)
+            1. segregate(mammalsSrc, hedgehogs, felines, predators)
+            2. segregate(predatorsSrc, chordates, manuls, felines)
+            3. segregate(hedgehogsSrc, insectivores, predators, predators)
             ELSE. Exit""";
 
     private static final Scanner scanner = new Scanner(System.in);
@@ -43,10 +29,14 @@ class Main {
                                  Collection<? super Manul> col2,
                                  Collection<? super Lynx> col3) {
 
-        Objects.requireNonNull(src);
-        Objects.requireNonNull(col1);
-        Objects.requireNonNull(col2);
-        Objects.requireNonNull(col3);
+        if (src == null)
+            throw new IllegalArgumentException("src is null");
+        if (col1 == null)
+            throw new IllegalArgumentException("col1 is null");
+        if (col2 == null)
+            throw new IllegalArgumentException("col2 is null");
+        if (col3 == null)
+            throw new IllegalArgumentException("col3 is null");
 
         for (Animal a : new ArrayList<>(src)) {
             switch (a) {
@@ -70,48 +60,56 @@ class Main {
         predatorsSrc.add(new Manul("purr", 5, false));
         predatorsSrc.add(new Lynx("growl", 6, false));
 
-        List<Hedgehog> hedgehogs1 = new ArrayList<>();
-        List<Feline> felines1 = new ArrayList<>();
-        List<Predator> predators1 = new ArrayList<>();
-
-        List<Chordate> chordates2 = new ArrayList<>();
-        List<Manul> manuls2 = new ArrayList<>();
-        List<Feline> felines2 = new ArrayList<>();
-
         List<Hedgehog> hedgehogsSrc = new ArrayList<>();
         hedgehogsSrc.add(new CommonHedgehog("sniff", 7, true));
+        hedgehogsSrc.add(new CommonHedgehog("phyir", 21, true));
 
-        List<Insectivore> insectivores3 = new ArrayList<>();
-        List<Predator> predators3 = new ArrayList<>();
-        List<Predator> predators4 = new ArrayList<>();
+        List<Hedgehog> hedgehogs = new ArrayList<>();
+        List<Manul> manuls = new ArrayList<>();
+        List<Chordate> chordates = new ArrayList<>();
+        List<Feline> felines = new ArrayList<>();
+        List<Predator> predators = new ArrayList<>();
+        List<Insectivore> insectivores = new ArrayList<>();
+
+
 
         while (true) {
             System.out.println(METHOD_SELECTION_PROMPT);
             String option = scanner.nextLine();
 
-            switch (option) {
-                case "1" -> {
-                    segregate(mammalsSrc, hedgehogs1, felines1, predators1);
-                    hedgehogs1.forEach(Animal::voice);
-                    felines1.forEach(Animal::voice);
-                    predators1.forEach(Animal::voice);
+            insectivores.clear();
+            predators.clear();
+            manuls.clear();
+            chordates.clear();
+            hedgehogs.clear();
+
+            try {
+                switch (option) {
+                    case "1" -> {
+                        segregate(mammalsSrc, hedgehogs, manuls, predators);
+                        hedgehogs.forEach(Animal::voice);
+                        manuls.forEach(Animal::voice);
+                        predators.forEach(Animal::voice);
+                    }
+                    case "2" -> {
+                        segregate(predatorsSrc, chordates, manuls, felines);
+                        chordates.forEach(Animal::voice);
+                        manuls.forEach(Animal::voice);
+                        felines.forEach(Animal::voice);
+                    }
+                    case "3" -> {
+                        segregate(hedgehogsSrc, insectivores, predators, predators);
+                        insectivores.forEach(Animal::voice);
+                        predators.forEach(Animal::voice);
+                        predators.forEach(Animal::voice);
+                    }
+                    default -> {
+                        System.out.println("The end");
+                        return;
+                    }
                 }
-                case "2" -> {
-                    segregate(predatorsSrc, chordates2, manuls2, felines2);
-                    chordates2.forEach(Animal::voice);
-                    manuls2.forEach(Animal::voice);
-                    felines2.forEach(Animal::voice);
-                }
-                case "3" -> {
-                    segregate(hedgehogsSrc, insectivores3, predators3, predators4);
-                    insectivores3.forEach(Animal::voice);
-                    predators3.forEach(Animal::voice);
-                    predators4.forEach(Animal::voice);
-                }
-                default -> {
-                    System.out.println("The end");
-                    return;
-                }
+            } catch (IllegalArgumentException e) {
+                System.err.println("ERROR: " + e.getMessage());
             }
         }
     }
