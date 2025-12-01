@@ -8,7 +8,12 @@ public class User {
     public User() {
         this.name = "Fernando Alonso";
         this.age = 44;
-        this.team = new F1Team("Lotus");
+    }
+
+    public User(F1Team team) {
+        this.name = "Lewis Hamilton";
+        this.age = 25;
+        this.team = team;
     }
 
     @Override
