@@ -2,11 +2,14 @@ package org.example.invoker;
 
 import org.example.annotation.Repeat;
 import java.lang.reflect.*;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Invoker {
 
     private static final Random random = new Random();
+    private static final int MAX_DEPTH = 64;
 
     public static void invokeAnnotatedMethods(Object obj) throws Exception {
         Method[] methods = obj.getClass().getDeclaredMethods();
@@ -31,16 +34,26 @@ public class Invoker {
         }
     }
 
-    private static Object[] buildParams(Class<?>[] types) throws Exception {
+    private static Object[] buildParams(Class<?>[] types) {
         Object[] arr = new Object[types.length];
-        for (int i = 0; i < types.length; i++) {
-            arr[i] = createValue(types[i]);
-        }
+        Set<Class<?>> path = new HashSet<>();
 
+        for (int i = 0; i < types.length; i++) {
+            arr[i] = createValueSafe(types[i], 0, path);
+        }
         return arr;
     }
 
-    private static Object createValue(Class<?> type) throws Exception {
+    private static Object createValueSafe(Class<?> type, int depth, Set<Class<?>> path) {
+        try {
+            return createValue(type, depth, path);
+        } catch (Exception e) {
+            System.err.println("Cycle dependence " + type.getName());
+            return null;
+        }
+    }
+
+    private static Object createValue(Class<?> type, int depth, Set<Class<?>> path) throws Exception {
 
         if (type == int.class || type == Integer.class)
             return random.nextInt(500);
@@ -64,24 +77,32 @@ public class Invoker {
             return (char) ('a' + random.nextInt(26));
 
         if (type == String.class) {
-            char c = (char) ('a' + random.nextInt(26));
-            return "auto_text_" + c;
+            return "default string";
         }
 
-        return createObjectRecursively(type);
+        if (depth >= MAX_DEPTH)
+            throw new RuntimeException("Extended recursion limit " + type.getName());
+
+        if (path.contains(type))
+            throw new RuntimeException("Cycle: " + type.getName());
+
+        path.add(type);
+        try {
+            return createObjectRecursively(type, depth, path);
+        } finally {
+            path.remove(type);
+        }
     }
 
-    private static Object createObjectRecursively(Class<?> type) throws Exception {
-        if (type.isPrimitive())
-            return 0;
+    private static Object createObjectRecursively(Class<?> type, int depth, Set<Class<?>> path) throws Exception {
 
         if (type.isInterface() || Modifier.isAbstract(type.getModifiers()))
             throw new IllegalArgumentException("You cant make an object from interface or abstract class =/");
 
-        return createWithParams(type);
+        return createWithParams(type, depth, path);
     }
 
-    private static Object createWithParams(Class<?> type) throws Exception {
+    private static Object createWithParams(Class<?> type, int depth, Set<Class<?>> path) throws Exception {
         Constructor<?> constructor;
 
         try {
@@ -96,11 +117,9 @@ public class Invoker {
         Object[] params = new Object[paramTypes.length];
 
         for (int i = 0; i < paramTypes.length; i++) {
-            params[i] = createValue(paramTypes[i]);
+            params[i] = createValueSafe(paramTypes[i], depth + 1, path);
         }
 
         return constructor.newInstance(params);
     }
-
-
 }

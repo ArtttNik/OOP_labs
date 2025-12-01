@@ -3,15 +3,12 @@ package org.example.classes;
 public class User {
     private String name;
     private int age;
+    private F1Team team;
 
     public User() {
-        this.name = "Sebastian Vettel";
-        this.age = 19;
-    }
-
-    public User(String name, int age) {
-        this.name = name;
-        this.age = age;
+        this.name = "Fernando Alonso";
+        this.age = 44;
+        this.team = new F1Team("Lotus");
     }
 
     @Override
@@ -19,4 +16,3 @@ public class User {
         return "name - " + name + ", age - " + age;
     }
 }
-
