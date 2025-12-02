@@ -81,7 +81,7 @@ public class Invoker {
 
             Object arr = Array.newInstance(comp, len);
             for (int i = 0; i < len; i++) {
-                Array.set(arr, i, createValue(comp, depth + 1, new HashSet<>(path)));
+                Array.set(arr, i, createValue(comp, depth + 1, path));
             }
 
             return arr;

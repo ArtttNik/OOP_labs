@@ -14,10 +14,10 @@ public class Main {
         try {
             Invoker.invokeAnnotatedMethods(object);
         } catch (IllegalAccessException |  InstantiationException | NoSuchMethodException | IllegalStateException e) {
-            System.err.println("ERROR " + e.getMessage());
+            System.err.println("ERROR in generating params/objs" + e.getMessage());
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-            System.err.println("ERROR: " + cause.getClass().getSimpleName());
+            System.err.println("ERROR in method: " + cause.getClass().getSimpleName());
         }
 
         System.out.println("\nExit!");

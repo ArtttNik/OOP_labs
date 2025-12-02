@@ -6,12 +6,12 @@ public class User {
     private F1Team team;
 
     public User() {
-        this.name = "Fernando Alonso";
+        this.name = "Driver from Default";
         this.age = 44;
     }
 
     public User(F1Team team) {
-        this.name = "Lewis Hamilton";
+        this.name = "Driver from params";
         this.age = 25;
         this.team = team;
     }

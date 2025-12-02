@@ -39,7 +39,7 @@ public class ClassWithMethods {
 
 
 
-    @Repeat(2)
+    @Repeat(value = 2)
     private void protectedVoid() {
         System.out.println("\nprotectedVoid: text = " + text);
     }
@@ -67,7 +67,7 @@ public class ClassWithMethods {
 
     @Repeat(1)
     protected void protectedArrEnum(User[] users, Status status) {
-        System.out.println("protectedArrEnum:" + "Users: " + Arrays.toString(users) + "Status: " + status);
+        System.out.println("\nprotectedArrEnum:" + "Users: " + Arrays.toString(users) + "Status: " + status);
     }
 
 }
