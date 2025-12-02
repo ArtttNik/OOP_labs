@@ -1,22 +1,12 @@
 package org.example.dictionary;
 
-import java.util.*;
+import java.util.Map;
 
-public class Translator {
-    private final Map<String, String> sortedDictionary;
-
-    public Translator(Map<String, String> dictionary) {
-        List<String> sortedKeys = new ArrayList<>(dictionary.keySet());
-        sortedKeys.sort((a, b) -> Integer.compare(b.length(), a.length()));
-
-        this.sortedDictionary = new LinkedHashMap<>();
-        for (String key : sortedKeys) {
-            this.sortedDictionary.put(key, dictionary.get(key));
-        }
-    }
+public record Translator(Map<String, String> dictionary) {
 
     public String translateText(String text) {
-        if (text == null || text.isEmpty()) return text;
+        if (text == null || text.isEmpty())
+            return text;
 
         StringBuilder result = new StringBuilder();
         int i = 0;
@@ -31,7 +21,7 @@ public class Translator {
 
             boolean matchFound = false;
 
-            for (Map.Entry<String, String> entry : sortedDictionary.entrySet()) {
+            for (Map.Entry<String, String> entry : dictionary.entrySet()) {
                 String key = entry.getKey();
                 String translation = entry.getValue();
                 int keyLength = key.length();
@@ -47,10 +37,10 @@ public class Translator {
                 if (!candidate.equalsIgnoreCase(key))
                     continue;
 
-                if (endIndex < text.length() && Character.isLetter(text.charAt(endIndex))) continue;
+                if (endIndex < text.length() && Character.isLetter(text.charAt(endIndex)))
+                    continue;
 
-                String translated = applyOriginalCase(candidate, translation);
-                result.append(translated);
+                result.append(applyOriginalCase(candidate, translation));
                 i += keyLength;
                 matchFound = true;
                 break;
@@ -58,9 +48,9 @@ public class Translator {
 
             if (!matchFound) {
                 int j = i;
-                while (j < text.length() && Character.isLetter(text.charAt(j))) {
+                while (j < text.length() && Character.isLetter(text.charAt(j)))
                     j++;
-                }
+
                 result.append(text, i, j);
                 i = j;
             }
@@ -73,13 +63,9 @@ public class Translator {
         if (original.isEmpty())
             return translation;
 
-        if (original.equals(original.toUpperCase())) {
-            return translation.toUpperCase();
-        } else if (Character.isUpperCase(original.charAt(0))) {
-            return Character.toUpperCase(translation.charAt(0)) +
-                    (translation.length() > 1 ? translation.substring(1).toLowerCase() : "");
-        }
+        if (Character.isUpperCase(original.charAt(0)))
+            return Character.toUpperCase(translation.charAt(0)) + translation.substring(1);
 
-        return translation.toLowerCase();
+        return translation;
     }
 }

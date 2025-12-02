@@ -1,9 +1,0 @@
-Hello! This is a test.
-Look forward to the event.
-The bobcat is not a cat.
-ABC test ABCabc.
-ALL_CAPS: HELLO_WORLD.
-MixedCase: LoOk FoRwArD To.
-Shortest match: a b c.
-Boundary check: .cat. ,bobcat, (look) [look forward to]
-No match: xyz123, 45test.
