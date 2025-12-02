@@ -1,7 +1,7 @@
 package org.example;
 
 import org.example.invoker.Invoker;
-import org.example.annotation.ClassWithMethods;
+import org.example.invoker.ClassWithMethods;
 
 import java.lang.reflect.InvocationTargetException;
 

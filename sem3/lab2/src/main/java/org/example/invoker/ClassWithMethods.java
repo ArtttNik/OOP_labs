@@ -1,7 +1,11 @@
-package org.example.annotation;
+package org.example.invoker;
 
+import org.example.annotation.Repeat;
 import org.example.classes.F1Team;
+import org.example.classes.Status;
 import org.example.classes.User;
+
+import java.util.Arrays;
 
 public class ClassWithMethods {
 
@@ -35,7 +39,7 @@ public class ClassWithMethods {
 
 
 
-    @Repeat(3)
+    @Repeat(2)
     private void protectedVoid() {
         System.out.println("\nprotectedVoid: text = " + text);
     }
@@ -60,4 +64,10 @@ public class ClassWithMethods {
         System.out.println("\nprotectedStringF1TeamIntUser: Season " + season + ", races: " + races
                 + ", team: " + team + ", user: " + user);
     }
+
+    @Repeat(1)
+    protected void protectedArrEnum(User[] users, Status status) {
+        System.out.println("protectedArrEnum:" + "Users: " + Arrays.toString(users) + "Status: " + status);
+    }
+
 }

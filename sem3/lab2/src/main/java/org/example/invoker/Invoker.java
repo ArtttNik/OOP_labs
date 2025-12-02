@@ -10,7 +10,7 @@ import java.util.Set;
 public class Invoker {
 
     private static final Random random = new Random();
-    private static final int MAX_DEPTH = 64;
+    private static final int MAX_DEPTH = 4;
 
     public static void invokeAnnotatedMethods(Object obj)
             throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
@@ -28,7 +28,6 @@ public class Invoker {
             method.setAccessible(true);
 
             int count = method.getAnnotation(Repeat.class).value();
-
             for (int i = 0; i < count; i++) {
                 Object[] params = buildParams(method.getParameterTypes());
                 method.invoke(obj, params);
@@ -44,6 +43,7 @@ public class Invoker {
         for (int i = 0; i < types.length; i++) {
             arr[i] = createValue(types[i], 0, path);
         }
+
         return arr;
     }
 
@@ -75,6 +75,25 @@ public class Invoker {
             return "default string";
         }
 
+        if (type.isArray()) {
+            Class<?> comp = type.getComponentType();
+            int len = random.nextInt(32);
+
+            Object arr = Array.newInstance(comp, len);
+            for (int i = 0; i < len; i++) {
+                Array.set(arr, i, createValue(comp, depth + 1, new HashSet<>(path)));
+            }
+
+            return arr;
+        }
+
+        if (type.isEnum()) {
+            Object[] constants = type.getEnumConstants();
+
+            return constants[random.nextInt(constants.length)];
+        }
+
+
         if (depth >= MAX_DEPTH) {
             throw new IllegalStateException("Recursion depth exceeded for type: " + type.getName());
         }
@@ -85,19 +104,10 @@ public class Invoker {
 
         path.add(type);
         try {
-            return createObjectRecursively(type, depth, path);
+            return createWithParams(type, depth, path);
         } finally {
             path.remove(type);
         }
-    }
-
-    private static Object createObjectRecursively(Class<?> type, int depth, Set<Class<?>> path)
-            throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-
-        if (type.isInterface() || Modifier.isAbstract(type.getModifiers()))
-            throw new IllegalArgumentException("You cant make an object from interface or abstract class =/");
-
-        return createWithParams(type, depth, path);
     }
 
     private static Object createWithParams(Class<?> type, int depth, Set<Class<?>> path)
