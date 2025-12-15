@@ -60,6 +60,9 @@ public record Translator(Map<String, String> dictionary) {
     }
 
     private String applyOriginalCase(String original, String translation) {
+        if (translation == null || translation.isEmpty())
+            return translation;
+
         if (original.isEmpty())
             return translation;
 

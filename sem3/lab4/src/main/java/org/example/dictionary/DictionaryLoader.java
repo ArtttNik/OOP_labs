@@ -24,7 +24,6 @@ public class DictionaryLoader {
         Map<String, String> dict = new TreeMap<>(
                 (a, b) -> {
                     int lenCmp = Integer.compare(b.length(), a.length());
-
                     if  (lenCmp != 0)
                         return lenCmp;
                     else {
