@@ -1,11 +1,13 @@
 to be| быть
-or | или
-not | не
+or |или
+not|не
+TEST | проверка НЕТ
+TEST | проверка ДА
 that | что
 is | есть
 QueSTioN | вопрос
 shall | должен
-I | я
+i | я
 compare | сравнивать
 thee | тебя
 to | к
@@ -17,7 +19,6 @@ star | звезда
 how | как
 wonder | удивляться
 what | что
-you | ты
 you | ты
 are | есть
 up | вверх
@@ -101,3 +102,5 @@ put out | тушить
 will | будешь
 fade | судьба
 grow | расти
+for | для
+my | мой

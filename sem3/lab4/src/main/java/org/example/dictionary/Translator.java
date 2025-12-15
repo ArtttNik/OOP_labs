@@ -13,40 +13,23 @@ public record Translator(Map<String, String> dictionary) {
 
         while (i < text.length()) {
             char c = text.charAt(i);
+
             if (!Character.isLetter(c)) {
                 result.append(c);
                 i++;
+
                 continue;
             }
 
-            boolean matchFound = false;
+            int matchEnd = findBestMatchEnd(text, i);
 
-            for (Map.Entry<String, String> entry : dictionary.entrySet()) {
-                String key = entry.getKey();
-                String translation = entry.getValue();
-                int keyLength = key.length();
-                int endIndex = i + keyLength;
+            if (matchEnd > i) {
+                String original = text.substring(i, matchEnd);
+                String translation = dictionary.get(original.toLowerCase());
 
-                if (i > 0 && Character.isLetter(text.charAt(i - 1)))
-                    continue;
-
-                if (endIndex > text.length())
-                    continue;
-
-                String candidate = text.substring(i, endIndex);
-                if (!candidate.equalsIgnoreCase(key))
-                    continue;
-
-                if (endIndex < text.length() && Character.isLetter(text.charAt(endIndex)))
-                    continue;
-
-                result.append(applyOriginalCase(candidate, translation));
-                i += keyLength;
-                matchFound = true;
-                break;
-            }
-
-            if (!matchFound) {
+                result.append(applyOriginalCase(original, translation));
+                i = matchEnd;
+            } else {
                 int j = i;
                 while (j < text.length() && Character.isLetter(text.charAt(j)))
                     j++;
@@ -59,11 +42,38 @@ public record Translator(Map<String, String> dictionary) {
         return result.toString();
     }
 
+    private int findBestMatchEnd(String text, int start) {
+
+        if (start > 0 && Character.isLetter(text.charAt(start - 1)))
+            return start;
+
+        int end = start;
+
+        while (end < text.length()) {
+            char c = text.charAt(end);
+            if (Character.isLetter(c) || c == ' ')
+                end++;
+            else
+                break;
+        }
+
+        while (end > start && text.charAt(end - 1) == ' ')
+            end--;
+
+        for (int i = end; i > start; i--) {
+            if (i < text.length() && Character.isLetter(text.charAt(i)))
+                continue;
+
+            String candidate = text.substring(start, i).toLowerCase();
+            if (dictionary.containsKey(candidate))
+                return i;
+        }
+
+        return start;
+    }
+
     private String applyOriginalCase(String original, String translation) {
         if (translation == null || translation.isEmpty())
-            return translation;
-
-        if (original.isEmpty())
             return translation;
 
         if (Character.isUpperCase(original.charAt(0)))
