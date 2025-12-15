@@ -85,6 +85,7 @@ class Main {
             manuls.clear();
             chordates.clear();
             hedgehogs.clear();
+            felines.clear();
 
             try {
                 switch (option) {
@@ -103,7 +104,6 @@ class Main {
                     case "3" -> {
                         segregate(hedgehogsSrc, insectivores, predators, predators);
                         insectivores.forEach(Animal::voice);
-                        predators.forEach(Animal::voice);
                         predators.forEach(Animal::voice);
                     }
                     default -> {
