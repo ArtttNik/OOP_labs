@@ -21,14 +21,14 @@ public record Translator(Map<String, String> dictionary) {
                 continue;
             }
 
-            int matchEnd = findBestMatchEnd(text, i);
+            int match = findBestMatch(text, i);
 
-            if (matchEnd > i) {
-                String original = text.substring(i, matchEnd);
+            if (match > i) {
+                String original = text.substring(i, match);
                 String translation = dictionary.get(original.toLowerCase());
 
                 result.append(applyOriginalCase(original, translation));
-                i = matchEnd;
+                i = match;
             } else {
                 int j = i;
                 while (j < text.length() && Character.isLetter(text.charAt(j)))
@@ -42,7 +42,7 @@ public record Translator(Map<String, String> dictionary) {
         return result.toString();
     }
 
-    private int findBestMatchEnd(String text, int start) {
+    private int findBestMatch(String text, int start) {
 
         if (start > 0 && Character.isLetter(text.charAt(start - 1)))
             return start;

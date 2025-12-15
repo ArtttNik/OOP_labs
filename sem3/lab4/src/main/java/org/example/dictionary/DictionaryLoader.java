@@ -42,10 +42,8 @@ public class DictionaryLoader {
                     throw new InvalidFileFormatException("Line " + lineNum + ": invalid dictionary format");
                 }
 
-                String source = matcher.group(1);
+                String key = matcher.group(1).toLowerCase();
                 String translation = matcher.group(2);
-
-                String key = source.toLowerCase();
 
                 if (dictionary.containsKey(key)) {
                     System.err.println("WARNING: Line " + lineNum + ": duplicate entry rewritten");
