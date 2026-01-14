@@ -1,106 +1,17 @@
 to be| быть
-or |или
-not|не
+or | или
+not | не
 TEST | проверка НЕТ
 TEST | проверка ДА
 that | что
-is | есть
-QueSTioN | вопрос
-shall | должен
 i | я
-compare | сравнивать
-thee | тебя
-to | к
-summer | лето
-day | день
-twinkle | мерцать
-little | маленький
-star | звезда
-how | как
-wonder | удивляться
-what | что
-you | ты
-are | есть
-up | вверх
-above | выше
-world | мир
-so | так
-high | высоко
-like | подобно
-diamond | алмаз
-in | в
-sky | небо
-when | когда
-this | этот
-cruel | жестокий
-winter | зима
-wind | ветер
-blow | дует
-rough | суровый
-rose | роза
-love | любовь
-which | который
-never | никогда
-fades | увядает
-but | но
-grows | растет
-stronger | сильнее
-with | с
-each | каждый
-passing | проходящий
-year | год
 look | смотреть
 look at | смотреть на
-look for | искать
-look after | присматривать
 look forward to | ожидать с нетерпением
-look up | искать в словаре
-look out | осторожно
-look into | исследовать
 go | идти
 go on | продолжать
-go out | выходить
-go back | возвращаться
-go away | уходить
-go through | проходить через
-go over | просматривать
-come | приходить
-come in | входить
-come back | возвращаться
-come up | возникать
-come across | сталкиваться
-come out | выходить
 get | получать
 get up | вставать
-get on | садиться
-get off | выходить
-get back | возвращаться
-get over | оправляться
-get through | справляться
-take | брать
-take off | взлетать
-take on | принимать
-take up | начинать
-take over | принимать управление
-take after | быть похожим
 stand | стоять
 stand up | вставать
-stand for | означать
-stand by | поддерживать
-turn | поворачивать
-turn on | включать
-turn off | выключать
-turn up | появляться
-turn down | отклонять
-turn into | превращаться
-put | класть
-put on | надевать
-put off | откладывать
-put up | размещать
-put down | записывать
-put out | тушить
-will | будешь
-fade | судьба
-grow | расти
-for | для
-my | мой
+merry-go-round | карусель

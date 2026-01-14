@@ -20,13 +20,12 @@ public class DictionaryLoader {
     );
 
     public Map<String, String> load(Path path) throws FileReadException, InvalidFileFormatException {
-
-        validateFile(path);
-
+        if (path == null) {
+            throw new IllegalArgumentException("Path is null");
+        }
         Map<String, String> dictionary = new HashMap<>();
 
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-
             String line;
             int lineNum = 0;
 
@@ -34,23 +33,23 @@ public class DictionaryLoader {
                 lineNum++;
 
                 line = line.trim();
-                if (line.isEmpty())
+                if (line.isEmpty()) {
                     continue;
+                }
 
                 Matcher matcher = DICT_LINE_PATTERN.matcher(line);
                 if (!matcher.matches()) {
-                    throw new InvalidFileFormatException("Line " + lineNum + ": invalid dictionary format");
+                    throw new InvalidFileFormatException("Line " + lineNum + ": invalid dictionary format. " +
+                            "String: " + line);
                 }
 
                 String key = matcher.group(1).toLowerCase();
                 String translation = matcher.group(2);
 
                 if (dictionary.containsKey(key)) {
-                    System.err.println("WARNING: Line " + lineNum + ": duplicate entry rewritten");
+                    System.err.println("\nWARNING: Line " + lineNum + ": duplicate entry rewritten\n");
                 }
-
                 dictionary.put(key, translation);
-
             }
 
         } catch (IOException e) {
@@ -58,19 +57,5 @@ public class DictionaryLoader {
         }
 
         return dictionary;
-    }
-
-    private void validateFile(Path path) throws FileReadException {
-        if (path == null)
-            throw new FileReadException("Path is null", null);
-
-        if (!Files.exists(path))
-            throw new FileReadException("File not found: " + path.toAbsolutePath(), null);
-
-        if (!Files.isRegularFile(path))
-            throw new FileReadException("Not a file: " + path.toAbsolutePath(), null);
-
-        if (!Files.isReadable(path))
-            throw new FileReadException("Access denied: " + path.toAbsolutePath(), null);
     }
 }
