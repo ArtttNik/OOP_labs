@@ -11,15 +11,17 @@ public class Supervisor extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("Supervisor detected state " + program.getState());
+            AbstractProgram.ProgramState lastKnown = null;
 
-            program.start();
-
-            while (program.isAlive()) {
-                AbstractProgram.ProgramState state = program.waitForStateChange();
+            while (true) {
+                AbstractProgram.ProgramState state = program.waitForStateChange(lastKnown);
+                lastKnown = state;
                 System.out.println("Supervisor detected state " + state);
 
                 switch (state) {
+                    case UNKNOWN:
+                        program.start();
+                        break;
                     case STOPPING:
                         System.out.println("Supervisor restarting program");
                         program.start();
@@ -28,7 +30,7 @@ public class Supervisor extends Thread {
                         System.out.println("Supervisor shutting down program");
                         program.shutdown();
                         return;
-                    default:
+                    case RUNNING:
                         break;
                 }
             }

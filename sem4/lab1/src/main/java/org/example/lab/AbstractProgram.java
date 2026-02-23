@@ -1,5 +1,7 @@
 package org.example.lab;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Random;
 
 public class AbstractProgram {
@@ -11,25 +13,24 @@ public class AbstractProgram {
         FATAL_ERROR
     }
 
+    private static final ProgramState[] RANDOM_STATES = Arrays.stream(ProgramState.values())
+            .filter(s -> s != ProgramState.UNKNOWN)
+            .toArray(ProgramState[]::new);
+
     private ProgramState state = ProgramState.UNKNOWN;
     private boolean alive = false;
     private final Object monitor = new Object();
     private final Thread daemon;
     private static final Random random = new Random();
-    private static final ProgramState[] STATES = {
-            ProgramState.RUNNING,
-            ProgramState.STOPPING,
-            ProgramState.FATAL_ERROR
-    };
 
-    public AbstractProgram() {
+    public AbstractProgram(Duration interval) {
         daemon = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    Thread.sleep(2000);
+                    Thread.sleep(interval.toMillis());
                     synchronized (monitor) {
                         if (!alive) break;
-                        state = STATES[random.nextInt(STATES.length)];
+                        state = RANDOM_STATES[random.nextInt(RANDOM_STATES.length)];
                         System.out.println("AbstractProgram state changed to " + state);
                         monitor.notifyAll();
                     }
@@ -61,21 +62,11 @@ public class AbstractProgram {
         }
     }
 
-    public boolean isAlive() {
+    public ProgramState waitForStateChange(ProgramState lastKnown) throws InterruptedException {
         synchronized (monitor) {
-            return alive;
-        }
-    }
-
-    public ProgramState getState() {
-        synchronized (monitor) {
-            return state;
-        }
-    }
-
-    public ProgramState waitForStateChange() throws InterruptedException {
-        synchronized (monitor) {
-            monitor.wait();
+            while (state == lastKnown) {
+                monitor.wait();
+            }
             return state;
         }
     }
