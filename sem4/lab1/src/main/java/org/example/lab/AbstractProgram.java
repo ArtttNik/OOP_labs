@@ -1,7 +1,6 @@
 package org.example.lab;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Random;
 
 public class AbstractProgram {
@@ -13,9 +12,11 @@ public class AbstractProgram {
         FATAL_ERROR
     }
 
-    private static final ProgramState[] RANDOM_STATES = Arrays.stream(ProgramState.values())
-            .filter(s -> s != ProgramState.UNKNOWN)
-            .toArray(ProgramState[]::new);
+    private static final ProgramState[] RANDOM_STATES = {
+            ProgramState.STOPPING,
+            ProgramState.RUNNING,
+            ProgramState.FATAL_ERROR
+    };
 
     private ProgramState state = ProgramState.UNKNOWN;
     private boolean alive = false;
@@ -28,17 +29,20 @@ public class AbstractProgram {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     Thread.sleep(interval.toMillis());
+
                     synchronized (monitor) {
-                        if (!alive) break;
-                        state = RANDOM_STATES[random.nextInt(RANDOM_STATES.length)];
-                        System.out.println("AbstractProgram state changed to " + state);
-                        monitor.notifyAll();
+                        if (alive) {
+                            state = RANDOM_STATES[random.nextInt(RANDOM_STATES.length)];
+                            System.out.println("AbstractProgram state changed to " + state);
+                            monitor.notifyAll();
+                        }
                     }
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         });
+
         daemon.setDaemon(true);
     }
 
