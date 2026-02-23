@@ -10,30 +10,30 @@ public class Supervisor extends Thread {
 
     @Override
     public void run() {
-        synchronized (program) {
-            try {
-                while (program.isAlive()) {
-                    program.wait();
-                    AbstractProgram.ProgramState state = program.getState();
-                    System.out.println("Supervisor detected state " + state);
+        try {
+            System.out.println("Supervisor detected state " + program.getState());
 
-                    switch (state) {
-                        case STOPPING:
-                            program.start();
-                            System.out.println("Supervisor restarting program");
-                            break;
-                        case FATAL_ERROR:
-                            program.shutdown();
-                            System.out.println("Supervisor shutting down program");
-                            return;
-                        default:
-                            break;
-                    }
-                    program.notifyAll();
+            program.start();
+
+            while (program.isAlive()) {
+                AbstractProgram.ProgramState state = program.waitForStateChange();
+                System.out.println("Supervisor detected state " + state);
+
+                switch (state) {
+                    case STOPPING:
+                        System.out.println("Supervisor restarting program");
+                        program.start();
+                        break;
+                    case FATAL_ERROR:
+                        System.out.println("Supervisor shutting down program");
+                        program.shutdown();
+                        return;
+                    default:
+                        break;
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

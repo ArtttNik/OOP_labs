@@ -13,6 +13,7 @@ public class AbstractProgram {
 
     private ProgramState state = ProgramState.UNKNOWN;
     private boolean alive = false;
+    private final Object monitor = new Object();
     private final Thread daemon;
     private static final Random random = new Random();
     private static final ProgramState[] STATES = {
@@ -23,44 +24,59 @@ public class AbstractProgram {
 
     public AbstractProgram() {
         daemon = new Thread(() -> {
-            synchronized (this) {
-                try {
-                    while (true) {
-                        notifyAll();
-                        wait();
-                        Thread.sleep(1000);
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    Thread.sleep(2000);
+                    synchronized (monitor) {
+                        if (!alive) break;
                         state = STATES[random.nextInt(STATES.length)];
                         System.out.println("AbstractProgram state changed to " + state);
+                        monitor.notifyAll();
                     }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         });
         daemon.setDaemon(true);
     }
 
-    public synchronized void start() {
-        if (!daemon.isAlive()) {
-            daemon.start();
+    public void start() {
+        synchronized (monitor) {
+            if (!daemon.isAlive()) {
+                daemon.start();
+            }
+            alive = true;
+            state = ProgramState.RUNNING;
+            System.out.println("AbstractProgram state changed to " + state);
+            monitor.notifyAll();
         }
-        alive = true;
-        state = ProgramState.RUNNING;
-        System.out.println("AbstractProgram state changed to " + state);
-        notifyAll();
     }
 
-    public synchronized void shutdown() {
-        alive = false;
-        daemon.interrupt();
-        notifyAll();
+    public void shutdown() {
+        synchronized (monitor) {
+            alive = false;
+            daemon.interrupt();
+            monitor.notifyAll();
+        }
     }
 
-    public synchronized boolean isAlive() {
-        return alive;
+    public boolean isAlive() {
+        synchronized (monitor) {
+            return alive;
+        }
     }
 
-    public synchronized ProgramState getState() {
-        return state;
+    public ProgramState getState() {
+        synchronized (monitor) {
+            return state;
+        }
+    }
+
+    public ProgramState waitForStateChange() throws InterruptedException {
+        synchronized (monitor) {
+            monitor.wait();
+            return state;
+        }
     }
 }

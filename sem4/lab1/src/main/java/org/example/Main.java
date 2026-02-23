@@ -8,6 +8,5 @@ public class Main {
         AbstractProgram program = new AbstractProgram();
         Supervisor supervisor = new Supervisor(program);
         supervisor.start();
-        program.start();
     }
 }
