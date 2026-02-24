@@ -19,10 +19,11 @@ public class AbstractProgram {
     };
 
     private ProgramState state = ProgramState.UNKNOWN;
-    private boolean alive = false;
-    private final Object monitor = new Object();
-    private final Thread daemon;
     private static final Random random = new Random();
+
+    private final Thread daemon;
+    private final Object monitor = new Object();
+    private boolean alive = false;
 
     public AbstractProgram(Duration interval) {
         daemon = new Thread(() -> {
@@ -51,6 +52,7 @@ public class AbstractProgram {
             if (!daemon.isAlive()) {
                 daemon.start();
             }
+
             alive = true;
             state = ProgramState.RUNNING;
             System.out.println("AbstractProgram state changed to " + state);
@@ -71,6 +73,7 @@ public class AbstractProgram {
             while (state == lastKnown) {
                 monitor.wait();
             }
+
             return state;
         }
     }
