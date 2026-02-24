@@ -9,6 +9,18 @@ public class Supervisor extends Thread {
         setName("Supervisor");
     }
 
+    public void startProgram() {
+        program.startProgram();
+    }
+
+    public void stopProgram() {
+        program.stopProgram();
+    }
+
+    public void shutdownProgram() {
+        program.shutdown();
+    }
+
     @Override
     public void run() {
         try {
@@ -25,17 +37,17 @@ public class Supervisor extends Thread {
                 switch (state) {
                     case UNKNOWN -> {
                         System.out.println("\u001B[7m¡Supervisor starting program!\u001B[0m");
-                        program.startProgram();
+                        startProgram();
                     }
                     case STOPPING -> {
                         System.out.println("\u001B[7m¡Supervisor restarting program!\u001B[0m");
-                        program.stopProgram();
-                        program.startProgram();
+                        stopProgram();
+                        startProgram();
                         lastKnown = null;
                     }
                     case FATAL_ERROR -> {
                         System.out.println("\u001B[7m¡Supervisor shutting down program!\u001B[0m");
-                        program.shutdown();
+                        shutdownProgram();
                         return;
                     }
                     case RUNNING -> {
