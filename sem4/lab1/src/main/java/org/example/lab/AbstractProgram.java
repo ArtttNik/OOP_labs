@@ -42,7 +42,8 @@ public class AbstractProgram extends Thread {
                 Thread.currentThread().interrupt();
             }
         });
-        daemon.setName("AbstractProgram-daemon");
+
+        daemon.setName("daemon");
         daemon.setDaemon(true);
         daemon.start();
 
