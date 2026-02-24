@@ -86,15 +86,12 @@ public class AbstractProgram extends Thread {
 
     public void shutdown() {
         synchronized (monitor) {
-            state = ProgramState.FATAL_ERROR;
-            System.out.println("AbstractProgram state changed to FATAL_ERROR");
             monitor.notifyAll();
         }
         interrupt();
     }
 
-    public ProgramState waitForStateChange(ProgramState lastKnown)
-            throws InterruptedException {
+    public ProgramState waitForStateChange(ProgramState lastKnown) throws InterruptedException {
         synchronized (monitor) {
             while (state == lastKnown) {
                 monitor.wait();

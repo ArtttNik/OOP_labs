@@ -27,12 +27,10 @@ public class Supervisor extends Thread {
             AbstractProgram.ProgramState lastKnown = null;
 
             while (true) {
-                AbstractProgram.ProgramState state =
-                        program.waitForStateChange(lastKnown);
+                AbstractProgram.ProgramState state = program.waitForStateChange(lastKnown);
                 lastKnown = state;
 
-                System.out.println("\u001B[7m¡AbstractProgram state detected as "
-                        + state + "!\u001B[0m");
+                System.out.println("\u001B[7m¡AbstractProgram state detected as " + state + "!\u001B[0m");
 
                 switch (state) {
                     case UNKNOWN -> {
