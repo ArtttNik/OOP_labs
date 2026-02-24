@@ -3,13 +3,9 @@ package org.example.lab;
 import java.time.Duration;
 import java.util.Random;
 
-public class AbstractProgram {
-
+public class AbstractProgram extends Thread {
     public enum ProgramState {
-        UNKNOWN,
-        STOPPING,
-        RUNNING,
-        FATAL_ERROR
+        UNKNOWN, STOPPING, RUNNING, FATAL_ERROR
     }
 
     private static final ProgramState[] RANDOM_STATES = {
@@ -20,19 +16,22 @@ public class AbstractProgram {
 
     private ProgramState state = ProgramState.UNKNOWN;
     private static final Random random = new Random();
-
-    private final Thread daemon;
     private final Object monitor = new Object();
-    private boolean alive = false;
+    private final Duration interval;
 
     public AbstractProgram(Duration interval) {
-        daemon = new Thread(() -> {
+        this.interval = interval;
+        setName("AbstractProgram");
+    }
+
+    @Override
+    public void run() {
+        Thread daemon = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     Thread.sleep(interval.toMillis());
-
                     synchronized (monitor) {
-                        if (alive) {
+                        if (state == ProgramState.RUNNING) {
                             state = RANDOM_STATES[random.nextInt(RANDOM_STATES.length)];
                             System.out.println("AbstractProgram state changed to " + state);
                             monitor.notifyAll();
@@ -43,29 +42,35 @@ public class AbstractProgram {
                 Thread.currentThread().interrupt();
             }
         });
-
+        daemon.setName("AbstractProgram-daemon");
         daemon.setDaemon(true);
-    }
+        daemon.start();
 
-    public void start() {
         synchronized (monitor) {
-            if (!daemon.isAlive()) {
-                daemon.start();
-            }
-
-            alive = true;
             state = ProgramState.RUNNING;
             System.out.println("AbstractProgram state changed to " + state);
             monitor.notifyAll();
         }
+
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                System.out.println("Я есть абстрактная программа, я работаю");
+                Thread.sleep(300);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        daemon.interrupt();
     }
 
     public void shutdown() {
         synchronized (monitor) {
-            alive = false;
-            daemon.interrupt();
+            state = ProgramState.STOPPING;
+            System.out.println("AbstractProgram state changed to " + state);
             monitor.notifyAll();
         }
+        this.interrupt();
     }
 
     public ProgramState waitForStateChange(ProgramState lastKnown) throws InterruptedException {
@@ -73,7 +78,6 @@ public class AbstractProgram {
             while (state == lastKnown) {
                 monitor.wait();
             }
-
             return state;
         }
     }
